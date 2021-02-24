@@ -1,0 +1,1 @@
+__add_real_target(test1 exe SOURCE test1.cpp LIB spdlog)
