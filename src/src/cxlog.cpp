@@ -15,11 +15,12 @@ namespace cxlog {
 	{
 		if (hasInitLog)return;
 		//设置日志等级
+
 		spdlog::set_level(static_cast<spdlog::level::level_enum>(log_level));
 		//设置日志为滚动日志
 		mp_logger_ =spdlog::rotating_logger_mt("cxlog", file_name,maxSize,maxFiles);
 		//当遇到错误级别以上的马上刷新到日志
-		mp_logger_->flush_on(spdlog::level::info);
+		mp_logger_->flush_on(spdlog::level::trace);
 		//每三秒刷新一次
 		spdlog::flush_every(std::chrono::seconds(3));
 		hasInitLog = true;
