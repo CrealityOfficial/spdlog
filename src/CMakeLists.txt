@@ -294,3 +294,10 @@ endif()
 if(CC_INSTALL_SPDLOG)
 	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/include/ spdlog)
 endif()
+
+if(INSTALL_SPDLOG)
+	INSTALL(TARGETS spdlog
+				LIBRARY DESTINATION lib
+				ARCHIVE DESTINATION .
+				RUNTIME DESTINATION bin)
+endif()
