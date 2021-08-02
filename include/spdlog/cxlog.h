@@ -44,4 +44,15 @@ namespace cxlog
 	};
 }
 
+<<<<<<< HEAD:include/spdlog/cxlog.h
+=======
+#define MAX_LOG_LEN 10240
+#define CXLogInfo(...)  cxlog::CXLog::Instance().info(__VA_ARGS__)
+#define CXLogDebug(...)  cxlog::CXLog::Instance().debug(__VA_ARGS__)
+#define CXLogWarn(...) cxlog::CXLog::Instance().warn(__VA_ARGS__)
+#define CXLogError(...)  cxlog::CXLog::Instance().error(__VA_ARGS__)
+#define CXLogCritical(...)  cxlog::CXLog::Instance().critical(__VA_ARGS__)
+//#define CXLogIns
+
+>>>>>>> c24464ef2cf9fd9470371e80ee413d38ecbd9f17:src/include/spdlog/cxlog.h
 #endif

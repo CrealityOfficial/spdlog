@@ -167,8 +167,13 @@ target_include_directories(spdlog PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 spdlog_enable_warnings(spdlog)
 
+<<<<<<< HEAD:CMakeLists.txt.cache
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
+=======
+#set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
+#set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
+>>>>>>> c24464ef2cf9fd9470371e80ee413d38ecbd9f17:src/CMakeLists.txt
 
 if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pch.h.in ${PROJECT_BINARY_DIR}/spdlog_pch.h @ONLY)
@@ -317,3 +322,18 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     include(cmake/spdlogCPack.cmake)
 endif()
+<<<<<<< HEAD:CMakeLists.txt.cache
+=======
+
+
+if(CC_INSTALL_SPDLOG)
+	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/include/ spdlog)
+endif()
+
+if(INSTALL_SPDLOG)
+	INSTALL(TARGETS spdlog
+				LIBRARY DESTINATION lib
+				ARCHIVE DESTINATION .
+				RUNTIME DESTINATION bin)
+endif()
+>>>>>>> c24464ef2cf9fd9470371e80ee413d38ecbd9f17:src/CMakeLists.txt
