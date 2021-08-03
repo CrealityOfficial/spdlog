@@ -10,7 +10,7 @@ include(cmake/ide.cmake)
 
 spdlog_extract_version()
 
-#project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
+project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
 include(GNUInstallDirs)
@@ -135,26 +135,18 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 # ---------------------------------------------------------------------------------------
-set(SPDLOG_SRCS src/spdlog.cpp src/stdout_sinks.cpp src/color_sinks.cpp
-				src/file_sinks.cpp src/async.cpp src/cfg.cpp
-				src/cxlog.cpp)
+set(SPDLOG_SRCS src/spdlog.cpp src/stdout_sinks.cpp src/color_sinks.cpp src/file_sinks.cpp src/async.cpp src/cfg.cpp)
 
 if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
 if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
-	if(NOT BUILD_SHARED_LIBS)
-		set(BUILD_SHARED_LIBS ON)
-	endif()
-	
     if(WIN32)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)
         list(APPEND SPDLOG_SRCS ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
     endif()
-	__add_real_library(spdlog SOURCE ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS}
-							  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/)
-    #add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(MSVC)
         target_compile_options(spdlog PUBLIC $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251
@@ -164,9 +156,7 @@ if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
         target_compile_definitions(spdlog PRIVATE FMT_EXPORT PUBLIC FMT_SHARED)
     endif()
 else()
-    #add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
-	__add_real_library(spdlog SOURCE ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS}
-						  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
@@ -177,8 +167,8 @@ target_include_directories(spdlog PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 spdlog_enable_warnings(spdlog)
 
-#set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
-#set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
+set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
+set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
 
 if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pch.h.in ${PROJECT_BINARY_DIR}/spdlog_pch.h @ONLY)
@@ -276,11 +266,6 @@ endif()
 # ---------------------------------------------------------------------------------------
 # Install
 # ---------------------------------------------------------------------------------------
-# ---------------------------------------------------------------------------------------
-# Include files
-# ---------------------------------------------------------------------------------------
-install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
-	
 if(SPDLOG_INSTALL)
     message(STATUS "Generating install")
     set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/spdlogConfig.cmake.in")
@@ -291,6 +276,10 @@ if(SPDLOG_INSTALL)
     set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
     set(pkg_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 
+    # ---------------------------------------------------------------------------------------
+    # Include files
+    # ---------------------------------------------------------------------------------------
+    install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
     install(
         TARGETS spdlog spdlog_header_only
         EXPORT spdlog
