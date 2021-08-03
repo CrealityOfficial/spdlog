@@ -18,16 +18,24 @@ namespace cxlog
 
 		void InitCXLog(std::string file_name="cxslice.log", int maxSize=1024*10, int maxFiles=4, int log_level=0);
 
-		void info(const char* fmt,...);
+		void info(const char* fmt, ...);
+		void info(const long long logSortId,const char* fmt,...);
+
 		void error(const char* fmt,...);
+		void error(const long long logSortId, const char* fmt, ...);
+
 		void debug(const char* fmt, ...);
+		void debug(const long long logSortId, const char* fmt, ...);
+
 		void warn(const char* fmt, ...);
+		void warn(const long long logSortId, const char* fmt, ...);
+
 		void critical(const char* fmt, ...);
+		void critical(const long long logSortId, const char* fmt, ...);
 
 		void EndLog();
 
 		void SetLevel(int level = 0);
-
 		auto GetLogger()
 		{
 			return mp_logger_;
@@ -46,10 +54,19 @@ namespace cxlog
 
 #define MAX_LOG_LEN 10240
 #define CXLogInfo(...)  cxlog::CXLog::Instance().info(__VA_ARGS__)
+#define CXLogInfo(logSortId,...)  cxlog::CXLog::Instance().info(logSortId,__VA_ARGS__)
+
 #define CXLogDebug(...)  cxlog::CXLog::Instance().debug(__VA_ARGS__)
+#define CXLogDebug(logSortId,...)  cxlog::CXLog::Instance().debug(logSortId,__VA_ARGS__)
+
 #define CXLogWarn(...) cxlog::CXLog::Instance().warn(__VA_ARGS__)
+#define CXLogWarn(logSortId,...)  cxlog::CXLog::Instance().warn(logSortId,__VA_ARGS__)
+
 #define CXLogError(...)  cxlog::CXLog::Instance().error(__VA_ARGS__)
+#define CXLogError(logSortId,...)  cxlog::CXLog::Instance().error(logSortId,__VA_ARGS__)
+
 #define CXLogCritical(...)  cxlog::CXLog::Instance().critical(__VA_ARGS__)
-//#define CXLogIns
+#define CXLogCritical(logSortId,...)  cxlog::CXLog::Instance().critical(logSortId,__VA_ARGS__)
+
 
 #endif

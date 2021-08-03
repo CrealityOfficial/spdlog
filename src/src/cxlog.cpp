@@ -3,6 +3,8 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/async.h"
 #include <stdarg.h> 
+#include<string>
+#include<sstream>
 
 namespace cxlog {
 
@@ -26,6 +28,24 @@ namespace cxlog {
 		hasInitLog = true;
 	}
 
+	void CXLog::info(const long long logSortId,const char* fmt, ...)
+	{
+		//暂无法传递可变参数到spdloger,先解析完再传
+		char buf[MAX_LOG_LEN] = { 0 };
+		va_list args;
+		va_start(args, fmt);
+		vsprintf(buf, fmt, args);
+		if (logSortId > 0)//日志分类ID
+		{
+			std::stringstream ss;
+			ss << "[" << logSortId << "] ";
+			ss << buf;
+			strncpy(buf, ss.str().c_str(), ss.str().length());
+		}
+
+		mp_logger_->info(buf);
+		va_end(args);
+	}
 	void CXLog::info(const char* fmt, ...)
 	{
 		//暂无法传递可变参数到spdloger,先解析完再传
@@ -45,12 +65,44 @@ namespace cxlog {
 		mp_logger_->error(buf);
 		va_end(args);
 	}
+	void CXLog::error(const long long logSortId, const char* fmt, ...)
+	{
+		char buf[MAX_LOG_LEN] = { 0 };
+		va_list args;
+		va_start(args, fmt);
+		vsprintf(buf, fmt, args);
+		if (logSortId > 0)//日志分类ID
+		{
+			std::stringstream ss;
+			ss << "[" << logSortId << "] ";
+			ss << buf;
+			strncpy(buf, ss.str().c_str(), ss.str().length());
+		}
+		mp_logger_->error(buf);
+		va_end(args);
+	}
 	void CXLog::debug(const char* fmt, ...)
 	{
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
 		vsprintf(buf, fmt, args);
+		mp_logger_->debug(buf);
+		va_end(args);
+	}
+	void CXLog::debug(const long long logSortId, const char* fmt, ...)
+	{
+		char buf[MAX_LOG_LEN] = { 0 };
+		va_list args;
+		va_start(args, fmt);
+		vsprintf(buf, fmt, args);
+		if (logSortId > 0)//日志分类ID
+		{
+			std::stringstream ss;
+			ss << "[" << logSortId << "] ";
+			ss << buf;
+			strncpy(buf, ss.str().c_str(), ss.str().length());
+		}
 		mp_logger_->debug(buf);
 		va_end(args);
 	}
@@ -63,6 +115,22 @@ namespace cxlog {
 		mp_logger_->warn(buf);
 		va_end(args);
 	}
+	void CXLog::warn(const long long logSortId, const char* fmt, ...)
+	{
+		char buf[MAX_LOG_LEN] = { 0 };
+		va_list args;
+		va_start(args, fmt);
+		vsprintf(buf, fmt, args);
+		if (logSortId > 0)//日志分类ID
+		{
+			std::stringstream ss;
+			ss << "[" << logSortId << "] ";
+			ss << buf;
+			strncpy(buf, ss.str().c_str(), ss.str().length());
+		}
+		mp_logger_->warn(buf);
+		va_end(args);
+	}
 
 	void CXLog::critical(const char* fmt, ...)
 	{
@@ -70,6 +138,23 @@ namespace cxlog {
 		va_list args;
 		va_start(args, fmt);
 		vsprintf(buf, fmt, args);
+		mp_logger_->critical(buf);
+		va_end(args);
+	}
+
+	void CXLog::critical(const long long logSortId, const char* fmt, ...)
+	{
+		char buf[MAX_LOG_LEN] = { 0 };
+		va_list args;
+		va_start(args, fmt);
+		vsprintf(buf, fmt, args);
+		if (logSortId > 0)//日志分类ID
+		{
+			std::stringstream ss;
+			ss << "[" << logSortId << "] ";
+			ss << buf;
+			strncpy(buf, ss.str().c_str(), ss.str().length());
+		}
 		mp_logger_->critical(buf);
 		va_end(args);
 	}
