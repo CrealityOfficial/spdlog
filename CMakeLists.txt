@@ -281,6 +281,13 @@ endif()
 # ---------------------------------------------------------------------------------------
 install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
 	
+if(INSTALL_SPDLOG)
+	INSTALL(TARGETS spdlog
+			LIBRARY DESTINATION lib
+			ARCHIVE DESTINATION .
+			RUNTIME DESTINATION bin)
+endif()
+
 if(SPDLOG_INSTALL)
     message(STATUS "Generating install")
     set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/spdlogConfig.cmake.in")
