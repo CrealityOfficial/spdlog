@@ -30,6 +30,11 @@ namespace cxlog {
 
 	void CXLog::info(const long long logSortId,const char* fmt, ...)
 	{
+		if (!mp_logger_)
+		{
+			return;
+		}
+
 		//暂无法传递可变参数到spdloger,先解析完再传
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
@@ -48,6 +53,10 @@ namespace cxlog {
 	}
 	void CXLog::info(const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		//暂无法传递可变参数到spdloger,先解析完再传
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
@@ -58,6 +67,10 @@ namespace cxlog {
 	}
 	void CXLog::error(const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -67,6 +80,10 @@ namespace cxlog {
 	}
 	void CXLog::error(const long long logSortId, const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -83,6 +100,10 @@ namespace cxlog {
 	}
 	void CXLog::debug(const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -92,6 +113,10 @@ namespace cxlog {
 	}
 	void CXLog::debug(const long long logSortId, const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -108,6 +133,10 @@ namespace cxlog {
 	}
 	void CXLog::warn(const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -117,6 +146,10 @@ namespace cxlog {
 	}
 	void CXLog::warn(const long long logSortId, const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -134,6 +167,10 @@ namespace cxlog {
 
 	void CXLog::critical(const char* fmt, ...)
 	{
+            if (!mp_logger_)
+            {
+                return;
+            }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
@@ -144,6 +181,10 @@ namespace cxlog {
 
 	void CXLog::critical(const long long logSortId, const char* fmt, ...)
 	{
+        if (!mp_logger_)
+        {
+            return;
+        }
 		char buf[MAX_LOG_LEN] = { 0 };
 		va_list args;
 		va_start(args, fmt);
