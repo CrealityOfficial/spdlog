@@ -264,6 +264,12 @@ public:
         log(level::critical, msg);
     }
 
+    template<typename T>
+    void main(const T &msg)
+    {
+        log(level::main, msg);
+    }
+
     // return true logging is enabled for the given level.
     bool should_log(level::level_enum msg_level) const
     {

@@ -153,7 +153,8 @@ using level_t = std::atomic<int>;
 #define SPDLOG_LEVEL_WARN 3
 #define SPDLOG_LEVEL_ERROR 4
 #define SPDLOG_LEVEL_CRITICAL 5
-#define SPDLOG_LEVEL_OFF 6
+#define SPDLOG_LEVEL_MAIN 6
+#define SPDLOG_LEVEL_OFF 7
 
 #if !defined(SPDLOG_ACTIVE_LEVEL)
 #    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
@@ -169,6 +170,7 @@ enum level_enum
     warn = SPDLOG_LEVEL_WARN,
     err = SPDLOG_LEVEL_ERROR,
     critical = SPDLOG_LEVEL_CRITICAL,
+    main = SPDLOG_LEVEL_MAIN,
     off = SPDLOG_LEVEL_OFF,
     n_levels
 };
@@ -179,13 +181,14 @@ enum level_enum
 #define SPDLOG_LEVEL_NAME_WARNING spdlog::string_view_t("warning", 7)
 #define SPDLOG_LEVEL_NAME_ERROR spdlog::string_view_t("error", 5)
 #define SPDLOG_LEVEL_NAME_CRITICAL spdlog::string_view_t("critical", 8)
+#define SPDLOG_LEVEL_NAME_MAIN spdlog::string_view_t("main", 4)
 #define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
 
 #if !defined(SPDLOG_LEVEL_NAMES)
 #    define SPDLOG_LEVEL_NAMES                                                                                                             \
         {                                                                                                                                  \
             SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR,  \
-                SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                                                                          \
+                SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_MAIN, SPDLOG_LEVEL_NAME_OFF                                                                          \
         }
 #endif
 
@@ -193,7 +196,7 @@ enum level_enum
 
 #    define SPDLOG_SHORT_LEVEL_NAMES                                                                                                       \
         {                                                                                                                                  \
-            "T", "D", "I", "W", "E", "C", "O"                                                                                              \
+            "T", "D", "I", "W", "E", "C", "M", "O"                                                                                              \
         }
 #endif
 

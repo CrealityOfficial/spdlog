@@ -27,6 +27,7 @@ SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, co
     colors_[level::warn] = to_string_(yellow_bold);
     colors_[level::err] = to_string_(red_bold);
     colors_[level::critical] = to_string_(bold_on_red);
+    colors_[level::main] = to_string_(green);
     colors_[level::off] = to_string_(reset);
 }
 
