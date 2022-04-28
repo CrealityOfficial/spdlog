@@ -1,4 +1,5 @@
 #include "spdlog/cxlog.h"
+#include <spdlog/common.h>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -84,13 +85,16 @@ namespace cxlog
         }
 		if (!mp_logger_)
 		{
-			time_t n = time(0);
-            tm *t = gmtime(&n);
-			
-			char buffer[64] = {0};
-            sprintf(buffer, "%d-%d-%d.cxlog", t->tm_year, t->tm_mon, t->tm_mday);
+            auto f = [](const char *name) -> std::string {
+				time_t n = time(0);
+				tm *t = gmtime(&n);
 
-			std::string fileName = m_directory + "/" + buffer;
+				char buffer[64] = {0};
+				sprintf(buffer, "cxsw3d_%d%d%d.text", t->tm_year, t->tm_mon, t->tm_mday);
+				return std::string(buffer);
+            };
+
+			std::string fileName = m_directory + "/" + (nameFunc ? nameFunc("") : f(""));
 
 			LOGI("CXLog::checkLogger [%s]", fileName.c_str());
             mp_logger_ = spdlog::basic_logger_mt("cxlog", fileName);
@@ -253,6 +257,11 @@ namespace cxlog
 			level = 7;
 
 		spdlog::set_level(static_cast<spdlog::level::level_enum>(level));
+	}
+
+	void CXLog::setNameFunc(logNameFunc func)
+	{
+		nameFunc = func;
 	}
 }
 

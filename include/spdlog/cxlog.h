@@ -1,17 +1,25 @@
 #ifndef _CXLOG_H
 #define _CXLOG_H
-#include<memory>
-#include<string>
-#include <spdlog/common.h>
+#include "ccglobal/export.h"
+#include <memory>
+#include <string>
+#include <functional>
+
+#ifdef CXLOG_DLL
+#    define CXLOG_API CC_DECLARE_EXPORT
+#else
+#    define CXLOG_API CC_DECLARE_IMPORT
+#endif
 
 namespace spdlog
 {
 	class logger;
 }
 
+typedef std::function<std::string(const char*)> logNameFunc;
 namespace cxlog
 {
-	class SPDLOG_API CXLog
+	class CXLOG_API CXLog
 	{
 	public:
 		static CXLog& Instance();
@@ -43,6 +51,7 @@ namespace cxlog
 		void EndLog();
 
 		void SetLevel(int level = 0);
+        void setNameFunc(logNameFunc func);
 	protected:
 		CXLog() {};
 		~CXLog() {};
@@ -55,6 +64,7 @@ namespace cxlog
 		bool hasInitLog = false;
 
 		std::string m_directory = ".";
+        logNameFunc nameFunc;
 	};
 }
 
