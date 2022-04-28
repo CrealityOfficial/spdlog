@@ -26,6 +26,7 @@ namespace cxlog
 
 		void InitCXLog(std::string file_name="cxslice.log", int maxSize=1024*10, int maxFiles=4, int log_level=0);
 		void setDirectory(const std::string& directory);
+        void setColorConsole();
 
 		void verbose(const char *fmt, ...);
         void verbose(const long long logSortId, const char *fmt, ...);
