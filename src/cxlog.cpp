@@ -1,4 +1,4 @@
-#include "spdlog/cxlog_macro.h"
+#include "spdlog/cxlog.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -7,8 +7,15 @@
 #include <string>
 #include <sstream>
 #include <ctime>
-#include <stdio.h>
-#include <io.h>
+
+#include "ccglobal/platform.h"
+
+#if __ANDROID__
+#include <android/log.h>
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,"NativeCC",__VA_ARGS__)
+#else
+#define LOGI(...)
+#endif
 
 #define MAX_LOG_LEN 10240
 
@@ -58,8 +65,11 @@ namespace cxlog
 		m_directory = directory;
 		if(m_directory.empty())
 			m_directory = ".";
-        if (access(m_directory.c_str(), 0))
-            m_directory = ".";
+        if (_cc_access(m_directory.c_str(), 0))
+		{
+			LOGI("setDirectory error. [%s]", m_directory.c_str());
+        	m_directory = ".";
+		}
 
 		checkLogger();
 	}
@@ -81,10 +91,15 @@ namespace cxlog
             sprintf(buffer, "%d-%d-%d.cxlog", t->tm_year, t->tm_mon, t->tm_mday);
 
 			std::string fileName = m_directory + "/" + buffer;
+
+			LOGI("CXLog::checkLogger [%s]", fileName.c_str());
             mp_logger_ = spdlog::basic_logger_mt("cxlog", fileName);
+			LOGI("CXLog::basic_logger_mt end.");
+
             spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
 			mp_logger_->flush_on(spdlog::level::main);
 			spdlog::flush_every(std::chrono::seconds(3));
+			LOGI("CXLog::checkLogger end.");
 			hasInitLog = true;
 		}
 

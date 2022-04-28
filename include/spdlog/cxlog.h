@@ -43,11 +43,6 @@ namespace cxlog
 		void EndLog();
 
 		void SetLevel(int level = 0);
-		auto GetLogger()
-		{
-			return mp_logger_;
-		}
-
 	protected:
 		CXLog() {};
 		~CXLog() {};
