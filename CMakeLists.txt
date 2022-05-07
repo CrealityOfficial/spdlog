@@ -162,12 +162,22 @@ if(CC_BC_ANDROID)
     list(APPEND LIBS log)
 endif()
 	
-__add_real_target(cxlog dll SOURCE ${SRCS}
-							 DEF ${DEFS}
-							 LIB ${LIBS}
-							 INC ${CMAKE_CURRENT_SOURCE_DIR}/include/
-							 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/
-							 )
+if(BUILD_CXLOG_STATIC)
+    __add_real_target(cxlog lib SOURCE ${SRCS}
+                             DEF ${DEFS}
+                             LIB ${LIBS}
+                             INC ${CMAKE_CURRENT_SOURCE_DIR}/include/
+                             INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/
+                             )
+else()
+    __add_real_target(cxlog dll SOURCE ${SRCS}
+                             DEF ${DEFS}
+                             LIB ${LIBS}
+                             INC ${CMAKE_CURRENT_SOURCE_DIR}/include/
+                             INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/
+                             )
+endif()
+
 
 spdlog_enable_warnings(cxlog)
 
