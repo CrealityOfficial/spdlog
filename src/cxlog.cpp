@@ -79,10 +79,11 @@ namespace cxlog
 	
 	void CXLog::setColorConsole()
 	{
+        spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
+        spdlog::flush_every(std::chrono::seconds(3));
         mp_logger_ = spdlog::stdout_color_mt("cxlog", spdlog::color_mode::automatic);
-		spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
-		mp_logger_->flush_on(spdlog::level::main);
-		spdlog::flush_every(std::chrono::seconds(3));
+		if(mp_logger_)
+			mp_logger_->flush_on(spdlog::level::main);
 		hasInitLog = true;
 	}
 	
@@ -98,22 +99,22 @@ namespace cxlog
 	    {
 	        auto f = [](const char *name) -> std::string {
 	            time_t n = time(0);
-	            tm *t = gmtime(&n);
+	            tm *t = localtime(&n);
 	
 	            char buffer[64] = {0};
-	            sprintf(buffer, "cxsw3d_%d%d%d.text", t->tm_year, t->tm_mon, t->tm_mday);
+	            sprintf(buffer, "cxsw3d_%d%02d%02d.text", (1900 + t->tm_year), (1 + t->tm_mon), t->tm_mday);
 	            return std::string(buffer);
 	        };
 	
+			spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
+            spdlog::flush_every(std::chrono::seconds(3));
 	        std::string fileName = m_directory + "/" + (nameFunc ? nameFunc("") : f(""));
 	
 	        LOGI("CXLog::checkLogger [%s]", fileName.c_str());
 	        mp_logger_ = spdlog::basic_logger_mt("cxlog", fileName);
 	        LOGI("CXLog::basic_logger_mt end.");
-	
-	        spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
-	        mp_logger_->flush_on(spdlog::level::main);
-	        spdlog::flush_every(std::chrono::seconds(3));
+			if(mp_logger_)
+				mp_logger_->flush_on(spdlog::level::main);
 	        LOGI("CXLog::checkLogger end.");
 	        hasInitLog = true;
 	    }

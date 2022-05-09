@@ -72,7 +72,8 @@ SPDLOG_INLINE void file_helper::reopen(bool truncate)
 
 SPDLOG_INLINE void file_helper::flush()
 {
-    std::fflush(fd_);
+    if(fd_)
+        std::fflush(fd_);
 }
 
 SPDLOG_INLINE void file_helper::close()
@@ -86,6 +87,9 @@ SPDLOG_INLINE void file_helper::close()
 
 SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
 {
+    if(!fd_)
+        return;
+
     size_t msg_size = buf.size();
     auto data = buf.data();
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
@@ -99,6 +103,7 @@ SPDLOG_INLINE size_t file_helper::size() const
     if (fd_ == nullptr)
     {
         throw_spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(filename_));
+        return 0;
     }
     return os::filesize(fd_);
 }

@@ -79,7 +79,6 @@
         do                                                                                                                                 \
         {                                                                                                                                  \
             printf("spdlog fatal error: %s\n", ex.what());                                                                                 \
-            std::abort();                                                                                                                  \
         } while (0)
 #    define SPDLOG_CATCH_STD
 #else
