@@ -65,14 +65,24 @@ SPDLOG_INLINE const char *spdlog_ex::what() const SPDLOG_NOEXCEPT
     return msg_.c_str();
 }
 
+std::string error_message(const std::string &msg, int last_errno)
+{
+    memory_buf_t outbuf;
+    fmt::format_system_error(outbuf, last_errno, msg.c_str());
+    return fmt::to_string(outbuf);
+}
+
 SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno)
 {
-    SPDLOG_THROW(spdlog_ex(msg, last_errno));
+    //SPDLOG_THROW(spdlog_ex(msg, last_errno));
+    //std::string _msg = error_message(msg, last_errno).c_str();
+    //LOGI("spdlog fatal error: %s\n", _msg.c_str());
 }
 
 SPDLOG_INLINE void throw_spdlog_ex(std::string msg)
 {
-    SPDLOG_THROW(spdlog_ex(std::move(msg)));
+    //SPDLOG_THROW(spdlog_ex(std::move(msg)));
+    //LOGI("spdlog fatal error: %s\n", msg.c_str());
 }
 
 } // namespace spdlog

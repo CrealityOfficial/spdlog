@@ -15,6 +15,13 @@
 #include <type_traits>
 #include <functional>
 
+#if __ANDROID__
+#    include <android/log.h>
+#    define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "NativeCC", __VA_ARGS__)
+#else
+#    define LOGI(...) (void)0
+#endif
+
 #ifdef SPDLOG_COMPILED_LIB
 #    undef SPDLOG_HEADER_ONLY
 #    if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
@@ -78,7 +85,7 @@
 #    define SPDLOG_THROW(ex)                                                                                                               \
         do                                                                                                                                 \
         {                                                                                                                                  \
-            printf("spdlog fatal error: %s\n", ex.what());                                                                                 \
+            LOGI("spdlog fatal error: %s\n", ex.what());                                                                                 \
         } while (0)
 #    define SPDLOG_CATCH_STD
 #else

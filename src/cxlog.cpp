@@ -101,7 +101,7 @@ namespace cxlog
 	            time_t n = time(0);
 	            tm *t = localtime(&n);
 	
-	            char buffer[64] = {0};
+	            char buffer[512] = {0};
 	            sprintf(buffer, "cxsw3d_%d%02d%02d.text", (1900 + t->tm_year), (1 + t->tm_mon), t->tm_mday);
 	            return std::string(buffer);
 	        };

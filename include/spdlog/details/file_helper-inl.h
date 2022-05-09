@@ -33,6 +33,7 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
     auto *mode = SPDLOG_FILENAME_T("ab");
     auto *trunc_mode = SPDLOG_FILENAME_T("wb");
 
+    LOGI("file_helper::open %s", filename_.c_str());
     for (int tries = 0; tries < open_tries_; ++tries)
     {
         // create containing folder if not exists already.
@@ -58,14 +59,16 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
         details::os::sleep_for_millis(open_interval_);
     }
 
-    throw_spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing", errno);
+    LOGI("file_helper::open throw_spdlog_ex");
+    LOGI("Failed opening file %s : %s", os::filename_to_str(filename_).c_str(), strerror(errno));
+    LOGI("file_helper::open throw_spdlog_ex 1");
 }
 
 SPDLOG_INLINE void file_helper::reopen(bool truncate)
 {
     if (filename_.empty())
     {
-        throw_spdlog_ex("Failed re opening file - was not opened before");
+        //throw_spdlog_ex("Failed re opening file - was not opened before");
     }
     this->open(filename_, truncate);
 }
@@ -94,7 +97,7 @@ SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
     auto data = buf.data();
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
     {
-        throw_spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno);
+        //throw_spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno);
     }
 }
 
@@ -102,7 +105,7 @@ SPDLOG_INLINE size_t file_helper::size() const
 {
     if (fd_ == nullptr)
     {
-        throw_spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(filename_));
+        //throw_spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(filename_));
         return 0;
     }
     return os::filesize(fd_);
