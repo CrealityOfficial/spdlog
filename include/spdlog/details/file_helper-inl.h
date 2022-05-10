@@ -94,9 +94,14 @@ SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
         return;
 
     size_t msg_size = buf.size();
-    auto data = buf.data();
-
-    LOGI("file_helper::write : %s", data);
+    const char* data = buf.data();
+#if 0
+    char* b = new char[msg_size + 1];
+    memcpy(b, data, msg_size);
+    b[msg_size] = '\0';
+    LOGI("file_helper::write : %s", b);
+    delete []b;
+#endif
 
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
     {
