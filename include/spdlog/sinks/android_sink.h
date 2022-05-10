@@ -52,20 +52,22 @@ protected:
         formatted.push_back('\0');
         const char *msg_output = formatted.data();
 
-        // See system/core/liblog/logger_write.c for explanation of return value
-        int ret = __android_log_write(priority, tag_.c_str(), msg_output);
-        int retry_count = 0;
-        while ((ret == -11 /*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
-        {
-            details::os::sleep_for_millis(5);
-            ret = __android_log_write(priority, tag_.c_str(), msg_output);
-            retry_count++;
-        }
+        __android_log_print(priority, tag_.c_str(), "%s", msg_output);
 
-        if (ret < 0)
-        {
-            throw_spdlog_ex("__android_log_write() failed", ret);
-        }
+        // See system/core/liblog/logger_write.c for explanation of return value
+        //int ret = __android_log_write(priority, tag_.c_str(), msg_output);
+        //int retry_count = 0;
+        //while ((ret == -11 /*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
+        //{
+        //    details::os::sleep_for_millis(5);
+        //    ret = __android_log_write(priority, tag_.c_str(), msg_output);
+        //    retry_count++;
+        //}
+//
+        //if (ret < 0)
+        //{
+        //    throw_spdlog_ex("__android_log_write() failed", ret);
+        //}
     }
 
     void flush_() override {}
@@ -87,6 +89,8 @@ private:
             return ANDROID_LOG_ERROR;
         case spdlog::level::critical:
             return ANDROID_LOG_FATAL;
+        case spdlog::level::main:
+            return ANDROID_LOG_INFO;
         default:
             return ANDROID_LOG_DEFAULT;
         }

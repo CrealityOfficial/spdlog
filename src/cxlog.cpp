@@ -4,6 +4,7 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/android_sink.h"
 #include "spdlog/async.h"
 #include <stdarg.h>
 #include <string>
@@ -79,9 +80,13 @@ namespace cxlog
 	
 	void CXLog::setColorConsole()
 	{
-        spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
         spdlog::flush_every(std::chrono::seconds(3));
+#if CC_SYSTEM_ANDROID
+        mp_logger_ = spdlog::android_logger_mt("cxlog", "NativeCC");
+#else
         mp_logger_ = spdlog::stdout_color_mt("cxlog", spdlog::color_mode::automatic);
+#endif
+
 		if(mp_logger_)
 			mp_logger_->flush_on(spdlog::level::main);
 		hasInitLog = true;
@@ -111,7 +116,15 @@ namespace cxlog
 	        std::string fileName = m_directory + "/" + (nameFunc ? nameFunc("") : f(""));
 	
 	        LOGI("CXLog::checkLogger [%s]", fileName.c_str());
+            errno = 0;
+
 	        mp_logger_ = spdlog::basic_logger_mt("cxlog", fileName);
+	        if(!mp_logger_ || (errno != 0))
+            {
+                errno = 0;
+	            setColorConsole();
+            }
+
 	        LOGI("CXLog::basic_logger_mt end.");
 			if(mp_logger_)
 				mp_logger_->flush_on(spdlog::level::main);

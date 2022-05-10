@@ -95,9 +95,12 @@ SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
 
     size_t msg_size = buf.size();
     auto data = buf.data();
+
+    LOGI("file_helper::write : %s", data);
+
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
     {
-        //throw_spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno);
+        LOGI("Failed writing to file %s : %s", os::filename_to_str(filename_).c_str(), strerror(errno));
     }
 }
 
