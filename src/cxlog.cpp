@@ -267,8 +267,11 @@ namespace cxlog
 	
 	void CXLog::EndLog()
 	{
-       mp_logger_->flush(); 
-	    mp_logger_.reset();
+		if (mp_logger_)
+		{
+            mp_logger_->flush();
+            mp_logger_.reset();
+	    }
 	    hasInitLog = false;
 	    spdlog::shutdown();
 	}
