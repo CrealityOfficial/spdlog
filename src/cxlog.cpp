@@ -56,9 +56,13 @@ namespace cxlog
 	
 	    spdlog::set_level(static_cast<spdlog::level::level_enum>(log_level));
 	    //设置日志为滚动日志
-	    mp_logger_ = spdlog::rotating_logger_mt("cxlog", file_name, maxSize, maxFiles);
+		LoggerPtr logger = spdlog::rotating_logger_mt("cxlog", file_name, maxSize, maxFiles);
 	    //当遇到错误级别以上的马上刷新到日志
-	    mp_logger_->flush_on(spdlog::level::trace);
+		if (logger)
+		{
+			logger->flush_on(spdlog::level::trace);
+			addLogger(logger);
+		}
 	    //每三秒刷新一次
 	    spdlog::flush_every(std::chrono::seconds(3));
 	    hasInitLog = true;
@@ -66,6 +70,9 @@ namespace cxlog
 	
 	void CXLog::setDirectory(const std::string &directory)
 	{
+		if (hasDirectoryLog)
+			return;
+
 	    m_directory = directory;
 	    if (m_directory.empty())
 	        m_directory = ".";
@@ -80,27 +87,70 @@ namespace cxlog
 	
 	void CXLog::setColorConsole()
 	{
+		if (hasConsoleLog)
+			return;
+
         spdlog::flush_every(std::chrono::seconds(3));
 #if CC_SYSTEM_ANDROID
-        mp_logger_ = spdlog::android_logger_mt("cxlog", "NativeCC");
+		LoggerPtr logger = spdlog::android_logger_mt("cxlog", "NativeCC");
 #else
-        mp_logger_ = spdlog::stdout_color_mt("cxlog", spdlog::color_mode::automatic);
+		LoggerPtr logger = spdlog::stdout_color_mt("cxlog", spdlog::color_mode::automatic);
 #endif
 
-		if(mp_logger_)
-			mp_logger_->flush_on(spdlog::level::main);
-		hasInitLog = true;
+		if (logger)
+		{
+			addLogger(logger);
+			logger->flush_on(spdlog::level::main);
+			hasConsoleLog = true;
+		}
+	}
+
+	void CXLog::addLogger(LoggerPtr logger)
+	{
+		m_mutex.lock();
+		m_loggers.push_back(logger);
+		m_mutex.unlock();
+	}
+
+	void CXLog::_log(CXLOG_Level level, const char* msg)
+	{
+		m_mutex.lock();
+		for (LoggerPtr logger : m_loggers)
+		{
+			switch (level)
+			{
+			case CXLOG_Level::cxlog_verbose:
+				logger->trace(msg);
+				break;
+			case CXLOG_Level::cxlog_debug:
+				logger->debug(msg);
+				break;
+			case CXLOG_Level::cxlog_info:
+				logger->info(msg);
+				break;
+			case CXLOG_Level::cxlog_warn:
+				logger->warn(msg);
+				break;
+			case CXLOG_Level::cxlog_err:
+				logger->error(msg);
+				break;
+			case CXLOG_Level::cxlog_critical:
+				logger->critical(msg);
+				break;
+			case CXLOG_Level::cxlog_main:
+				logger->main(msg);
+				break;
+			default:
+				break;
+			}
+		}
+
+		m_mutex.unlock();
 	}
 	
-	bool CXLog::checkLogger()
+	void CXLog::checkLogger()
 	{
-	    if (hasInitLog)
-	    {
-	        if (mp_logger_)
-	            return true;
-	        return false;
-	    }
-	    if (!mp_logger_)
+	    if (!hasDirectoryLog)
 	    {
 	        auto f = [](const char *name) -> std::string {
 	            time_t n = time(0);
@@ -111,166 +161,118 @@ namespace cxlog
 	            return std::string(buffer);
 	        };
 	
-			spdlog::set_level(static_cast<spdlog::level::level_enum>(spdlog::level::warn));
             spdlog::flush_every(std::chrono::seconds(3));
 	        std::string fileName = m_directory + "/" + (nameFunc ? nameFunc("") : f(""));
 	
 	        LOGI("CXLog::checkLogger [%s]", fileName.c_str());
             errno = 0;
 
-	        mp_logger_ = spdlog::basic_logger_mt("cxlog", fileName);
-	        if(!mp_logger_ || (errno != 0))
+	        LoggerPtr logger = spdlog::basic_logger_mt("cxlog", fileName);
+	        if(errno != 0)
             {
-                errno = 0;
-	            setColorConsole();
+				logger = nullptr;
+				errno = 0;
             }
 
-	        LOGI("CXLog::basic_logger_mt end.");
-			if(mp_logger_)
-				mp_logger_->flush_on(spdlog::level::main);
-	        LOGI("CXLog::checkLogger end.");
-	        hasInitLog = true;
+			if (logger)
+			{
+				logger->flush_on(spdlog::level::main);
+				addLogger(logger);
+				hasDirectoryLog = true;
+			}
 	    }
-	
-	    if (mp_logger_)
-	    {
-	        return true;
-	    }
-	    return false;
 	}
 	
 	void CXLog::verbose(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->trace(buf);
+		_log(CXLOG_Level::cxlog_verbose, buf);
 	}
 	
 	void CXLog::verbose(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->trace(buf);
+		_log(CXLOG_Level::cxlog_verbose, buf);
 	}
 	
 	void CXLog::debug(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->debug(buf);
+		_log(CXLOG_Level::cxlog_debug, buf);
 	}
 	
 	void CXLog::debug(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->debug(buf);
+		_log(CXLOG_Level::cxlog_debug, buf);
 	}
 	
 	void CXLog::info(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->info(buf);
+		_log(CXLOG_Level::cxlog_info, buf);
 	}
 	
 	void CXLog::info(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->info(buf);
+		_log(CXLOG_Level::cxlog_info, buf);
 	}
 	
 	void CXLog::warn(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->warn(buf);
+		_log(CXLOG_Level::cxlog_warn, buf);
 	}
 	
 	void CXLog::warn(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->warn(buf);
+		_log(CXLOG_Level::cxlog_warn, buf);
 	}
 	
 	void CXLog::error(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->error(buf);
+		_log(CXLOG_Level::cxlog_err, buf);
 	}
 	
 	void CXLog::error(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->warn(buf);
+		_log(CXLOG_Level::cxlog_err, buf);
 	}
 	
 	void CXLog::critical(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->critical(buf);
+		_log(CXLOG_Level::cxlog_critical, buf);
 	}
 	
 	void CXLog::critical(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->critical(buf);
+		_log(CXLOG_Level::cxlog_critical, buf);
 	}
 	
 	void CXLog::main(const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR();
-	    mp_logger_->main(buf);
+		_log(CXLOG_Level::cxlog_main, buf);
 	}
 	
 	void CXLog::main(const long long logSortId, const char *fmt, ...)
 	{
-	    if (!checkLogger())
-	        return;
-	
 	    FORMAT_VAR_ID();
-	    mp_logger_->main(buf);
+		_log(CXLOG_Level::cxlog_main, buf);
 	}
 	
 	void CXLog::EndLog()
 	{
-		if (mp_logger_)
+		for (LoggerPtr logger : m_loggers)
 		{
-            mp_logger_->flush();
-            mp_logger_.reset();
+			logger->flush();
+			logger.reset();
 	    }
 	    hasInitLog = false;
 	    spdlog::shutdown();
@@ -278,8 +280,6 @@ namespace cxlog
 	
 	void CXLog::SetLevel(int level)
 	{
-	    checkLogger();
-	
 	    if (level < 0)
 	        level = 0;
 	    if (level > 7)

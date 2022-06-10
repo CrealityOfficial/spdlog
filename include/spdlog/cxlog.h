@@ -4,6 +4,19 @@
 #include <memory>
 #include <string>
 #include <functional>
+#include <mutex>
+#include <vector>
+
+enum class CXLOG_Level
+{
+	cxlog_verbose = 0,
+	cxlog_debug = 1,
+	cxlog_info = 2,
+	cxlog_warn = 3,
+	cxlog_err = 4,
+	cxlog_critical = 5,
+	cxlog_main = 6    //main log, not error, but level is high  
+};
 
 #ifdef CXLOG_DLL
 #    define CXLOG_API CC_DECLARE_EXPORT
@@ -16,6 +29,7 @@ namespace spdlog
 	class logger;
 }
 
+typedef std::shared_ptr<spdlog::logger> LoggerPtr;
 typedef std::function<std::string(const char*)> logNameFunc;
 namespace cxlog
 {
@@ -59,13 +73,19 @@ namespace cxlog
 		CXLog(const CXLog& other) = delete;
 		CXLog& operator=(const CXLog& other) = delete;
 
-		bool checkLogger();
+		void checkLogger();
+		void addLogger(LoggerPtr logger);
+		void _log(CXLOG_Level level, const char* msg);
 	private:
-		std::shared_ptr<spdlog::logger> mp_logger_;
+		std::vector<LoggerPtr> m_loggers;
 		bool hasInitLog = false;
 
+		bool hasDirectoryLog = false;
+		bool hasConsoleLog = false;
 		std::string m_directory = ".";
         logNameFunc nameFunc;
+
+		std::mutex m_mutex;
 	};
 }
 

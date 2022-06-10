@@ -2,17 +2,6 @@
 #define _CXLOG_MACRO_H
 #include "spdlog/cxlog.h"
 
-enum class CXLOG_Level
-{
-    cxlog_verbose = 0,
-    cxlog_debug = 1,
-    cxlog_info = 2,
-    cxlog_warn = 3,
-    cxlog_err = 4,
-    cxlog_critical = 5,
-    cxlog_main = 6    //main log, not error, but level is high  
-};
-
 #define CXLogVerbose(...) cxlog::CXLog::Instance().verbose(__VA_ARGS__)
 #define CXLogVerboseID(logSortId, ...) cxlog::CXLog::Instance().verbose(logSortId, ##__VA_ARGS__)
 
