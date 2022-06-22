@@ -92,7 +92,8 @@ namespace cxlog
 
         spdlog::flush_every(std::chrono::seconds(3));
 #if CC_SYSTEM_ANDROID
-		LoggerPtr logger = spdlog::android_logger_mt("cxlog", "NativeCC");
+        LOGI("CXLog::setColorConsole.");
+		LoggerPtr logger = spdlog::android_logger_mt("cxlog-console", "NativeCC");
 #else
 		LoggerPtr logger = spdlog::stdout_color_mt("cxlog", spdlog::color_mode::automatic);
 #endif
@@ -167,7 +168,7 @@ namespace cxlog
 	        LOGI("CXLog::checkLogger [%s]", fileName.c_str());
             errno = 0;
 
-	        LoggerPtr logger = spdlog::basic_logger_mt("cxlog", fileName);
+	        LoggerPtr logger = spdlog::basic_logger_mt("cxlog-file", fileName);
 	        if(errno != 0)
             {
 				logger = nullptr;
