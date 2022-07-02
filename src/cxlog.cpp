@@ -37,7 +37,9 @@
     va_end(args)
 
 #define FORMAT_VAR()                                                                                                                       \
-    const long long logSortId = -1;                                                                                                        \
+ long long logSortId = -1;                                                                                                        \
+    if (m_logSortId > 0)                                                                                                                       \
+         logSortId = m_logSortId;                                                                                                                       \
     FORMAT_VAR_ID()
 
 namespace cxlog 

@@ -67,6 +67,7 @@ namespace cxlog
 
 		void SetLevel(int level = 0);
         void setNameFunc(logNameFunc func);
+        void setLogSortId(long long logSortId) {m_logSortId = logSortId;}
 	protected:
 		CXLog() {};
 		~CXLog() {};
@@ -86,6 +87,7 @@ namespace cxlog
         logNameFunc nameFunc;
 
 		std::mutex m_mutex;
+		long long m_logSortId = 0;
 	};
 }
 
