@@ -212,3 +212,11 @@ if(CC_INSTALL_SPDLOG)
 	
 	INSTALL(FILES ${INSTALL_HEADERS} DESTINATION include/spdlog/spdlog/)
 endif()
+
+if(CC_INSTALL_CXLOG)
+	set(INSTALL_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog.h
+						${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog_macro.h
+						)
+	
+	INSTALL(FILES ${INSTALL_HEADERS} DESTINATION include/spdlog/)
+endif()
