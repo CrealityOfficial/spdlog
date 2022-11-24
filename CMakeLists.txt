@@ -206,17 +206,19 @@ if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
 endif()
 
 if(CC_INSTALL_SPDLOG)
-	set(INSTALL_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog.h
-						${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog_macro.h
-						)
-	
-	INSTALL(FILES ${INSTALL_HEADERS} DESTINATION include/spdlog/spdlog/)
+	#set(INSTALL_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog.h
+	#					${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog_macro.h
+	#					)
+	#
+	#INSTALL(FILES ${INSTALL_HEADERS} DESTINATION include/spdlog/spdlog/)
+	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/include/ spdlog)
 endif()
 
 if(CC_INSTALL_CXLOG)
-	set(INSTALL_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog.h
-						${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog_macro.h
-						)
-	
-	INSTALL(FILES ${INSTALL_HEADERS} DESTINATION include/spdlog/)
+	#set(INSTALL_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog.h
+	#					${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/cxlog_macro.h
+	#					)
+	#
+	#INSTALL(FILES ${INSTALL_HEADERS} DESTINATION include/spdlog/)
+	__install_directory_specif(${CMAKE_CURRENT_SOURCE_DIR}/include/ spdlog)
 endif()
