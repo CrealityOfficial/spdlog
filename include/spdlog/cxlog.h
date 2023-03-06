@@ -18,10 +18,22 @@ enum class CXLOG_Level
 	cxlog_main = 6    //main log, not error, but level is high  
 };
 
+//#ifdef CXLOG_DLL
+//#    define CXLOG_API CC_DECLARE_EXPORT
+//#else
+//#    define CXLOG_API CC_DECLARE_IMPORT
+//#endif
+
+#if USE_CXLOG_DLL
+#    define CXLOG_API CC_DECLARE_IMPORT
+#elif USE_CXBIN_STATIC
+#    define CXLOG_API CC_DECLARE_STATIC
+#else
 #ifdef CXLOG_DLL
 #    define CXLOG_API CC_DECLARE_EXPORT
 #else
-#    define CXLOG_API CC_DECLARE_IMPORT
+#        define CXLOG_API CC_DECLARE_STATIC
+#endif
 #endif
 
 namespace spdlog

@@ -162,7 +162,8 @@ if(CC_BC_ANDROID)
     list(APPEND LIBS log)
 endif()
 	
-if(BUILD_CXLOG_STATIC)
+if(BUILD_CXLOG_STATIC OR CC_GLOBAL_FORCE_STATIC)
+	list(REMOVE_ITEM DEFS CXLOG_DLL)
     __add_real_target(cxlog lib SOURCE ${SRCS}
                              DEF ${DEFS}
                              LIB ${LIBS}
